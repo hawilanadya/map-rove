@@ -1,0 +1,286 @@
+<html>
+  <head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        overflow: hidden;
+        height: 100vh;
+      }
+      #map {
+        height: 100%; /* Set the height of the map */
+        width: 100%;
+      }
+      .map-container {
+        height: 100vh; /* Full height of the viewport */
+        overflow: hidden; /* Prevent scrolling */
+      }
+      .content-container {
+        height: 100vh; /* Full height of the viewport */
+        overflow-y: auto; /* Allow vertical scrolling */
+      }
+    </style>
+  </head>
+  <body class="flex">
+    <div class="content-container w-1/3 p-5 bg-white">
+      <div class="flex items-center mb-8">
+        <img src="picts/logocolored.png" alt="Logo" class="w-8 h-8 mr-2" />
+        <h1 class="text-2xl font-semibold text-green-700">MAP-ROOVE</h1>
+      </div>
+      <div class="p-2 mt-10">
+        <h2 class="font-semibold text-lg text-blue-900">
+          Ketahui lokasi dan titik mangrove di perairan Jakarta pada pemetaan
+          mangrove disini!
+        </h2>
+        <p class="text-gray-500 mb-8">
+          Lokasi penelitian: Perairan Utara Daerah Khusus Jakarta Utara
+        </p>
+      </div>
+      <div class="p-2 mb-4">
+        <h2 class="text-2xl font-bold mb-2">Pemetaan Luasan Mangrove</h2>
+        <p class="text-gray-500 mb-4">
+          Ketahui pemetaan mangrove tahun 2013-2024 disini!
+        </p>
+        <div class="flex space-x-4 border-black-400">
+          <div>
+            <label for="tahunRamalan">Pilih Tahun:</label>
+            <select id="tahunRamalan" class="border-black-400">
+              <option value="2013">2013</option>
+              <option value="2014">2014</option>
+              <option value="2015">2015</option>
+              <option value="2016">2016</option>
+              <option value="2017">2017</option>
+              <option value="2018">2018</option>
+              <option value="2019">2019</option>
+              <option value="2020">2020</option>
+              <option value="2021">2021</option>
+              <option value="2022">2022</option>
+              <option value="2023">2023</option>
+              <option value="2024">2024</option>
+            </select>
+          </div>
+          <button
+            id="runButton"
+            class="px-6 py-2 bg-blue-900 text-white rounded-full transition-transform duration-200 active:scale-95 hover:bg-blue-400"
+          >
+            Tampilkan Peta
+          </button>
+        </div>
+
+        <div class="pt-10">
+          <h3 class="text-2xl font-bold">Prediksi Luas Mangrove</h3>
+          <div class="flex space-x-4">
+            <div class="pt-5">
+              <p class="text-gray-500 mb-2">
+                Ketahui prediksi pemetaan luasan mangrove 6 tahun kedepan!
+              </p>
+              <label for="tahunPrediksi">Pilih Tahun:</label>
+              <select id="tahunPrediksi">
+                <option value="2013">2025</option>
+                <option value="2014">2026</option>
+                <option value="2015">2027</option>
+                <option value="2016">2028</option>
+                <option value="2017">2029</option>
+                <option value="2018">2030</option>
+                <option value="2019">2031</option>
+              </select>
+              <button
+                id="dropdownbutton"
+                class="px-6 py-2 bg-blue-900 text-white rounded-full transition-transform duration-200 active:scale-95 hover:bg-blue-400"
+              >
+                Tampilkan Prediksi
+              </button>
+              <div class="mt-5">
+                <img id="gambarPrediksi" src="" alt="" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="w-2/3">
+      <div id="map" class="w-full h-full"></div>
+      <!-- Map container -->
+    </div>
+  </body>
+</html>
+
+<script src="js/luas2013.js"></script>
+<script src="js/luas2014.js"></script>
+<script src="js/luas2015.js"></script>
+<script src="js/luas2016.js"></script>
+<script src="js/luas2017.js"></script>
+<script src="js/luas2018.js"></script>
+<script src="js/luas2019.js"></script>
+<script src="js/luas2020.js"></script>
+<script src="js/luas2021.js"></script>
+<script src="js/luas2022.js"></script>
+<script src="js/luas2023.js"></script>
+<script src="js/luas2024.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Inisialisasi peta
+    const map = L.map("map").setView([-6.2, 106.84513], 10);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "© OpenStreetMap",
+    }).addTo(map);
+    console.log("OpenStreetMap layer added");
+    // Optionally, you can add a marker
+    L.marker([-6.2, 106.84513]).addTo(map);
+    //change map view
+    var Esri_WorldImagery = L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      {
+        attribution:
+          "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+      }
+    );
+
+    Esri_WorldImagery.addTo(map);
+
+    // Fungsi untuk menampilkan polygon berdasarkan tahun
+    document.getElementById("runButton").addEventListener("click", function () {
+      const tahunRamalan = parseInt(
+        document.getElementById("tahunRamalan").value
+      );
+
+      // Hapus semua layer sebelumnya dari peta
+      map.eachLayer(function (layer) {
+        if (layer instanceof L.GeoJSON) {
+          map.removeLayer(layer);
+        }
+      });
+
+      // Menampilkan polygon berdasarkan tahun yang dipilih
+      if (tahunRamalan === 2013) {
+        L.geoJSON(coordinates2013, { style: stylePolygon }).addTo(map);
+      } else if (tahunRamalan === 2014) {
+        L.geoJSON(cooordinates2014, { style: stylePolygon }).addTo(map);
+      } else if (tahunRamalan === 2015) {
+        L.geoJSON(coordinates2015, { style: stylePolygon }).addTo(map);
+      } else if (tahunRamalan === 2016) {
+        L.geoJSON(coordinates2016, { style: stylePolygon }).addTo(map);
+      } else if (tahunRamalan === 2017) {
+        L.geoJSON(coordinates2017, { style: stylePolygon }).addTo(map);
+      } else if (tahunRamalan === 2018) {
+        L.geoJSON(coordinates2018, { style: stylePolygon }).addTo(map);
+      } else if (tahunRamalan === 2019) {
+        L.geoJSON(coordinates2019, { style: stylePolygon }).addTo(map);
+      } else if (tahunRamalan === 2020) {
+        L.geoJSON(coordinates2020, { style: stylePolygon }).addTo(map);
+      } else if (tahunRamalan === 2021) {
+        L.geoJSON(coordinates2021, { style: stylePolygon }).addTo(map);
+      } else if (tahunRamalan === 2022) {
+        L.geoJSON(coordinates2022, { style: stylePolygon }).addTo(map);
+      } else if (tahunRamalan === 2023) {
+        L.geoJSON(coordinates2023, { style: stylePolygon }).addTo(map);
+      } else if (tahunRamalan === 2024) {
+        L.geoJSON(coordinates2024, { style: stylePolygon }).addTo(map);
+      }
+    });
+
+    // Fungsi untuk mengatur gaya polygon
+    function stylePolygon(feature) {
+      let color;
+      switch (feature.properties.tahun) {
+        case 2013:
+          color = "yellow";
+          break;
+        case 2014:
+          color = "pink";
+          break;
+        case 2015:
+          color = "purple";
+          break;
+        case 2016:
+          color = "blue";
+          break;
+        case 2017:
+          color = "black";
+          break;
+        case 2018:
+          color = "black";
+          break;
+        case 2019:
+          color = "black";
+          break;
+        case 2020:
+          color = "black";
+          break;
+        case 2021:
+          color = "black";
+          break;
+        case 2022:
+          color = "black";
+          break;
+        case 2023:
+          color = "black";
+          break;
+        case 2024:
+          color = "black";
+          break;
+        default:
+          color = "red";
+      }
+
+      return {
+        fillColor: color,
+        fillOpacity: 0.5,
+        weight: 2,
+        opacity: 1,
+        color: color, // Outline color
+      };
+    }
+
+    const dropdownButton = document.getElementById("dropdownbutton");
+    const tahunPrediksiSelect = document.getElementById("tahunPrediksi");
+    const gambarPrediksi = document.getElementById("gambarPrediksi");
+
+    // Sembunyikan gambar awal
+    gambarPrediksi.style.display = "none";
+
+    dropdownButton.addEventListener("click", () => {
+      const selectedYear = tahunPrediksiSelect.value;
+      predictLuasan(selectedYear);
+    });
+
+    function predictLuasan(year) {
+      fetch("http://192.168.43.114:5000/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ year: year }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          dropdownButton.textContent = `Prediksi: ${data.prediction}`;
+
+          // Tentukan path gambar berdasarkan tahun yang dipilih
+          const imagePath = `asset/${year}.jpg`;
+
+          // Tampilkan gambar setelah prediksi selesai
+          gambarPrediksi.src = imagePath;
+          gambarPrediksi.style.display = "block";
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          dropdownButton.textContent = "Error!";
+        });
+    }
+  });
+</script>
